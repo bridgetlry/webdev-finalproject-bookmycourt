@@ -1,0 +1,87 @@
+.booking-container {
+  width: 100vw;
+  min-height: 90vh;
+  background: linear-gradient(135deg, #f0f7ff, #eaf4ff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+.booking-card {
+  background: white;
+  padding: 2rem 3rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 600px;
+}
+.input-group { margin-bottom: 1.5rem; text-align: left; }
+.court-btn, .slot-btn {
+  margin: 0.3rem; padding: 0.6rem 1.1rem;
+  border-radius: 6px; border: 1px solid #007bff;
+  cursor: pointer; background-color: #e3f2fd; color: #007bff;
+  transition: all .3s;
+}
+.court-btn.selected, .slot-btn.selected {
+  background-color: #007bff; color: white;
+}
+.slot-btn.booked {
+  background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; cursor: not-allowed;
+}
+.book-btn {
+  background-color: #007bff; color: white; border: none;
+  padding: 0.9rem 2rem; border-radius: 8px; font-weight: 600;
+}
+.book-btn:hover { background-color: #005fcc; }
+/* Fix text visibility */
+.booking-container h1,
+.booking-container h2,
+.booking-container h3 {
+  color: #1a1a2e;
+}
+
+.booking-container p {
+  color: #333;
+  font-size: 1rem;
+}
+
+.booking-container .subtitle,
+.booking-container p:first-of-type {
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.booking-card label {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Ensure all text in booking card is visible */
+.booking-card,
+.booking-card * {
+  color: #333;
+}
+
+.booking-card h1,
+.booking-card h2,
+.booking-card h3 {
+  color: #1a1a2e;
+}
+
+/* Keep button colors */
+.court-btn,
+.slot-btn {
+  color: #007bff;
+}
+
+.court-btn.selected,
+.slot-btn.selected,
+.book-btn {
+  color: white;
+}
+
+.slot-btn.booked {
+  color: #721c24;
+}
