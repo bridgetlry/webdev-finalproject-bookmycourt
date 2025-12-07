@@ -1,3 +1,5 @@
+/// <reference types="google.maps" />
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import './Map.css';
