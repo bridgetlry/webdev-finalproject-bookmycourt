@@ -14,7 +14,7 @@ interface TurfLocation {
   zipCode?: string;
   latitude: number;
   longitude: number;
-  courts: string[];  // Array of court IDs
+  numberOfCourts: number;
 }
 
 const Map: React.FC = () => {
@@ -103,7 +103,7 @@ const Map: React.FC = () => {
           <div class="info-window-header">
             <h3>${location.name}</h3>
             ${location.city && location.state ? `<p class="info-window-address">${location.city}, ${location.state}</p>` : ''}
-<p style="font-size: 14px; color: #888; margin: 0 0 16px 0;">${location.courts.length} court${location.courts.length > 1 ? 's' : ''} available</p>
+<p style="font-size: 14px; color: #888; margin: 0 0 16px 0;">${location.numberOfCourts} court${location.numberOfCourts > 1 ? 's' : ''} available</p>
           </div>
           <div class="info-window-courts">
             <p class="courts-label">Select a court:</p>
@@ -126,30 +126,27 @@ const Map: React.FC = () => {
           console.log('Clicked:', location.name);
 
           // Fetch turf details for all courts at this location
-          const turfDetails = await Promise.all(
-            location.courts.map(async (courtId) => {
-
+      var turfDetails: any[] = [];
               try {
-                const url = `${HTTP_SERVER}/api/turfs/${courtId}`;
+                const url = `${HTTP_SERVER}/api/locations/turfs/${location._id}`;
                 const response = await fetch(url);
 
                 if (response.ok) {
                   const data = await response.json();
-                  return data;
+                  turfDetails = data;
+                  console.log(turfDetails)
                 }
-                return null;
+                
               } catch (error) {
-                console.error(`Error fetching turf ${courtId}:`, error);
-                return null;
+                console.error(`Error fetching turf ${location._id}:`, error);
+                turfDetails = [];
               }
-            })
-          );
 
-          // Filter out any failed requests
-          const validTurfs = turfDetails.filter(turf => turf !== null);
 
+         
+          console.log(turfDetails)
           // Create info window content
-          const content = createInfoWindowContent(location, validTurfs);
+          const content = createInfoWindowContent(location, turfDetails);
 
           // Create Window
           const { InfoWindow } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
@@ -159,7 +156,7 @@ const Map: React.FC = () => {
           infoWindow.open(map, marker);
 
           setTimeout(() => {
-            validTurfs.forEach((turf) => {
+            turfDetails.forEach((turf) => {
               const button = document.getElementById(`court-btn-${turf._id}`);
               if (button) {
                 button.addEventListener('click', () => {

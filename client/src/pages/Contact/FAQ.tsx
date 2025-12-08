@@ -42,7 +42,7 @@ export const FAQ: React.FC = () => {
       {faqs.map((faq, index) => (
         <div key={index} style={{ marginBottom: '10px', border: '1px solid #ddd', padding: '10px' }}>
           <div 
-            onClick={() => toggleFAQ(index)}
+            onClick={() => toggleFAQ(index)} //Opens answer section onClick
             style={{ cursor: 'pointer', fontWeight: 'bold' }}
           >
             {faq.question}

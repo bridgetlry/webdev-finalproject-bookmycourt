@@ -1,5 +1,6 @@
 import TurfsDao from "./dao.js";
 import BookingsDao from "../Bookings/dao.js";
+import LocationsDao from "../Locations/dao.js";
 
 export default function TurfRoutes(app, db) {
     const dao = TurfsDao(db);
@@ -33,12 +34,8 @@ export default function TurfRoutes(app, db) {
 
     const createTurf= async (req, res) => {
         const currentUser = req.session["currentUser"];
-        const newCourse = await dao.createTurf(req.body);
-        const booking = await bookingsDao.bookTurf(
-            currentUser._id,
-            newCourse._id,
-            Date.now()
-        );
+        const newTurf = await dao.createTurf(req.body);
+        const locationUpdate = await LocationsDao.addNewCourtToLocation(newTurf.location)
         res.json({course : newCourse, booking: booking});
     };
 

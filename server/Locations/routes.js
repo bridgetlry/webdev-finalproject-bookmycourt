@@ -45,6 +45,17 @@ export default function LocationsRoutes(app, db) {
         }
     };
 
+     const findAllTurfsAtLocation = async (req, res) => {
+        try {
+            const { locationId } = req.params;
+            const turfs = await dao.findAllCourtsAtLocation(locationId);
+            res.json(turfs);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    };
+
+
     const updateLocation = (req, res) => {
         res.sendStatus(501);
     };
@@ -54,4 +65,5 @@ export default function LocationsRoutes(app, db) {
     app.get("/api/locations/:locationId", findLocationById);
     app.put("/api/locations/:locationId", updateLocation);
     app.delete("/api/locations/:locationId", deleteLocation);
+    app.get("/api/locations/turfs/:locationId", findAllTurfsAtLocation)
 }

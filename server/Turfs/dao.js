@@ -49,6 +49,7 @@ export default function TurfsDao(db) {
             { $set: turfUpdates }
         )
     }
+  
 
     return {
         findAllTurfs,
@@ -56,6 +57,6 @@ export default function TurfsDao(db) {
         findTurfsForUser,
         createTurf,
         deleteTurf,
-        updateTurf
+        updateTurf,
     };
 }

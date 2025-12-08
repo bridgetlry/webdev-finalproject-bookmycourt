@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import model from "./model.js";
+import turfModel from "../Turfs/model.js";
 
 export default function LocationsDao(db) {
     return {
@@ -13,9 +14,13 @@ export default function LocationsDao(db) {
         },
         
         findAllCourtsAtLocation: (locationId) => {
-            return model.findById(locationId).then(location => location ? location.courts : []);
+             return turfModel.find({ location: locationId });
         },
-        
+
+        addNewCourtToLocation:(locationId) => {
+             return model.updateOne({ _id: locationId }, { $inc: { numberOfCourts: 1 } });
+        },
+    
         findLocationById: (locationId) => {
             return model.findById(locationId);
         },
@@ -35,5 +40,7 @@ export default function LocationsDao(db) {
         deleteLocation: (locationId) => {
             return model.deleteOne({ _id: locationId });
         }
+        
     };
+   
 }
