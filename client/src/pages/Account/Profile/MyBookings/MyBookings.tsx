@@ -61,20 +61,17 @@ export default function MyBookings() {
     return (
         <div className="my-bookings">
             <h2>My Bookings</h2>
-
             <div>
-                {turfs.length === 0 ?
+                { bookings.length === 0 ?
                     <h4>No bookings yet</h4>
                     : <div>
-                        {turfs.filter((turf: { _id: any }) => isBooked(turf._id, currentUser?._id))
-                            .map((turf: { _id: any; name: string; img: string }) => (
-                                <Link to={`/turf/${turf._id}`}>
-                                    <Col className="bookingName">{turf.name}</Col>
-                                    <Col className="bookingDateTime">Booked for: {findDateTime(turf._id, currentUser?._id)}</Col>
-                                    <br />
-                                </Link>
-                            ))}
-
+                        {bookings.map((booking: { turf: { _id: any; name: string }; bookingDate: string; bookingTime: string }) => (
+                            <Link to={`/turf/${booking.turf._id}`} key={booking.turf._id + booking.bookingDate + booking.bookingTime}>
+                                <Col className="bookingName">{booking.turf.name}</Col>
+                                <Col className="bookingDateTime">Booked for: {booking.bookingDate} at {booking.bookingTime}</Col>
+                                <br />
+                            </Link>
+                        ))}
                     </div>
                 }
             </div>
