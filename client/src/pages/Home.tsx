@@ -7,7 +7,7 @@ import {
   FaHeart,
   FaRegHeart,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { Turf } from "../types/turf.types";
 import { getAllTurfs } from "../data/mockTurfs";
 import * as client from "./client";
@@ -201,8 +201,9 @@ const Home: React.FC = () => {
         </div>
         <div className="footer">
           <p>Created by Bridget Leary (SEC 05), Isabel Cuddihy (SEC 05), Ankita Das (SEC 05), and Parthiv Dharmendra Modi (?)</p>
-          <p>Client repository: https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/client</p>
-          <p>Server repository: https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/server</p>
+          <Link to="https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/client">Client repository</Link>
+          <br />
+          <Link to="https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/server">Server repository</Link>
         </div>
       </div>
     </>
