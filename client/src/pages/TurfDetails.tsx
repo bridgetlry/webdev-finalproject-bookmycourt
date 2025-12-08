@@ -11,15 +11,17 @@ import type { TurfDetails as TurfDetailsType, TimeSlot } from '../types/turf.typ
 import { getTurfById } from '../data/mockTurfs';
 import './TurfDetails.css';
 import { bookTurf } from './client';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setBookings } from './Account/Profile/MyBookings/reducer';
 
 const HTTP_SERVER = import.meta.env.VITE_API_URL || "";
 
 const TurfDetails: React.FC = () => {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const bookings = useSelector((state: any) => state.bookingsReducer.bookings);
+  const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
 
   const [turf, setTurf] = useState<TurfDetailsType | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -30,8 +32,16 @@ const TurfDetails: React.FC = () => {
 
   useEffect(() => {
     fetchTurfDetails();
+    fetchAllBookings();
     generateDates();
   }, [id]);
+
+  // Regenerate time slots whenever bookings, selectedDate, or turf change
+  useEffect(() => {
+    if (turf) {
+      setTimeSlots(generateTimeSlots(turf.pricePerHour));
+    }
+  }, [bookings, selectedDate, turf]);
 
   const generateDates = () => {
     const today = new Date();
@@ -52,6 +62,27 @@ const TurfDetails: React.FC = () => {
       loadMockData();
     }
   };
+
+  const fetchAllBookings = async () => {
+    try {
+      const response = await fetch(`${HTTP_SERVER}/api/bookings`);
+      const data = await response.json();
+      dispatch(setBookings(data));
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+    }
+  }
+
+  // Check if a given time (slotTime) on the currently selected date on the current turf (param id) is booked.
+  // If slotTime is omitted, fall back to the currently selected slot's time.
+  function isBooked(slotTime?: string): boolean {
+    const timeToCompare = slotTime ?? (selectedSlot ? selectedSlot.time : "");
+    return bookings.some((booking: {turf: {_id: string}, bookingDate: string, bookingTime: string}) =>
+      booking.turf._id === id &&
+      booking.bookingDate === selectedDate &&
+      booking.bookingTime.substring(0, 5) === timeToCompare.substring(0, 5)
+    );
+  }
 
   const loadMockData = () => {
     if (!id) {
@@ -83,10 +114,13 @@ const TurfDetails: React.FC = () => {
       const isPeakHour = hour >= 18 && hour < 21;
       const price = isPeakHour ? basePrice + 3 : basePrice;
 
+
       slots.push({
         id: `slot-${hour}`,
         time: `${timeString} - ${endTimeString}`,
-        isAvailable: Math.random() > 0.3,
+        // Check availability for this specific slot time instead of relying on `selectedSlot`.
+        isAvailable: !isBooked(`${timeString} - ${endTimeString}`),
+        //Math.random() > 0.3,
         price: price,
       });
     }
