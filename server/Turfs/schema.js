@@ -12,7 +12,8 @@ const turfSchema = new mongoose.Schema({
    description: String,
    amenities: String,
    openTime: String,
-   closeTime: String
+   closeTime: String,
+   location: String
  },
  { collection: "turfs" });
 export default turfSchema;

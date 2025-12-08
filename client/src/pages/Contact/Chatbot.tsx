@@ -63,7 +63,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ geminiService }) => {
         content: 'Sorry, I encountered an error. Please try again.',
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, errorMessage]); // Add to previous messages
     } finally {
       setIsLoading(false);
     }
@@ -109,7 +109,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ geminiService }) => {
         />
         <button 
           onClick={handleSend} 
-          disabled={isLoading || !inputValue.trim()} //trimming ending whitespaces
+          disabled={isLoading || !inputValue.trim()} //trimming whitespaces
         
         >
           Send

@@ -5,6 +5,7 @@ const axiosWithCredentials =
 const HTTP_SERVER = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 export const USERS_API = `${HTTP_SERVER}/api/users`;
+const TURFS_API = `${HTTP_SERVER}/api/turfs`;
 
 export const signin = async (credentials: any) => {
   const response = await axiosWithCredentials.post(
@@ -71,5 +72,17 @@ export const createUser =
     const response = await
       axios.post(`${USERS_API}`, user);
     return response.data;
+};
+
+export const createTurf =
+  async (turf: any) => {
+    const response = await
+      axios.post(`${TURFS_API}`, turf);
+    return response.data;
+};
+
+export const findAllTurfs = async () => {
+  const response = await axiosWithCredentials.get(TURFS_API);
+  return response.data;
 };
 

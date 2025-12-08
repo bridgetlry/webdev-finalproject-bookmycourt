@@ -9,7 +9,7 @@ export const Contact: React.FC = () => {
   const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
 
   useEffect(() => {
-    // Initialize Gemini service with API key from .env to access AI Bot
+    // Initialize Gemini service with API key from .env 
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
  
     setGeminiService(new GeminiService(apiKey));
@@ -41,7 +41,7 @@ export const Contact: React.FC = () => {
         </div>
 
       </div>
-       {/* Rules of pickleball */}
+       {/* Rules of Courts (General) */}
         <div style={{ border: '1px solid', padding: '20px' }}>
           <Rules />
         </div>

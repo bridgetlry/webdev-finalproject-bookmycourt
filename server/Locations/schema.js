@@ -11,7 +11,7 @@ const locationSchema = new mongoose.Schema(
     zipCode: String,
     latitude: Number,
     longitude: Number,
-    courts: [String],
+    numberOfCourts: Number,
   },
   { collection: "locations" }
 );
