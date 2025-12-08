@@ -10,9 +10,9 @@ export default function BookingRoutes(app, db) {
         res.send(newBooking);
     }
 
-    const deleteBookingForUser =  async (req, res) => {
-        const { turfId, userId } = req.params;
-        const status = await dao.deleteBookingForUser(userId, turfId);
+    const deleteBooking =  async (req, res) => {
+        const { bookingId } = req.params;
+        const status = await dao.deleteBooking(bookingId);
         res.send(status);
     }
 
@@ -41,7 +41,7 @@ export default function BookingRoutes(app, db) {
     };
  
     app.post("/api/turfs/:turfId/bookings/:userId", bookTurf);
-    app.delete("/api/turfs/:turfId/bookings/:userId", deleteBookingForUser);
+    app.delete("/api/bookings/:bookingId", deleteBooking);
     app.get("/api/bookings", fetchAllBookings);
     app.get("/api/users/:userId/bookings", fetchBookingsForUser);
 }

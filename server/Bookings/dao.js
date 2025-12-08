@@ -32,8 +32,8 @@ export default function BookingsDao(db) {
     });
   }
 
-  function deleteBookingForUser(user, turf, bookingTime) {
-    return model.deleteOne({ user, turf, bookingTime });
+  function deleteBooking(bookingId) {
+    return model.deleteOne({ _id: bookingId });
   }
 
   function deleteAllBookingsForTurf(turfId) {
@@ -50,7 +50,7 @@ export default function BookingsDao(db) {
     findTurfsForUser,
     findUsersForTurf,
     bookTurf,
-    deleteBookingForUser,
+    deleteBooking,
     deleteAllBookingsForTurf,
     fetchBookings
   };

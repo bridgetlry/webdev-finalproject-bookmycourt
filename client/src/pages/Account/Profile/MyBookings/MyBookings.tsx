@@ -5,30 +5,26 @@ import { useEffect } from "react";
 import { setBookings } from "./reducer";
 import { setTurfs } from "../../../reducer";
 import { Link } from "react-router-dom";
+import BookingControlButtons from "./BookingControlButtons";
 
 export default function MyBookings() {
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const { turfs } = useSelector((state: any) => state.turfReducer);
     const { bookings } = useSelector((state: any) => state.bookingsReducer);
 
-    function isBooked(turfId: string, userId: string) {
-        const ibooked = bookings.some((booking: any) =>
-            booking.user && booking.turf &&
-            booking.user._id === userId &&
-            booking.turf._id === turfId);
-        console.log("isBooked check:", { turfId, userId, ibooked });
-        return ibooked;
+    const onRemoveBooking = async (bookingId: string) => {
+        try {
+            await client.deleteBooking(bookingId);
+            console.log(`Booking ${bookingId} deleted successfully.`);
+            // Refresh bookings after deletion
+            if (currentUser?._id) {
+                const updatedBookings = await client.fetchAllUserBookings(currentUser._id);
+                dispatch(setBookings(updatedBookings));
+            }
+        } catch (error) {
+            console.error(`Error deleting booking ${bookingId}:`, error);
+        }
     }
-
-    function findDateTime(turfId: string, userId: string) {
-        const booking = bookings.find((booking: any) =>
-            booking.user && booking.turf &&
-            booking.user._id === userId &&
-            booking.turf._id === turfId);
-        return booking ? `${booking.bookingDate} at ${booking.bookingTime}` : "N/A";
-    }
-
     const fetchTurfs = async () => {
         try {
             const turfs = await client.fetchAllTurfs();
@@ -62,15 +58,19 @@ export default function MyBookings() {
         <div className="my-bookings">
             <h2>My Bookings</h2>
             <div>
-                { bookings.length === 0 ?
+                {bookings.length === 0 ?
                     <h4>No bookings yet</h4>
                     : <div>
-                        {bookings.map((booking: { turf: { _id: any; name: string }; bookingDate: string; bookingTime: string }) => (
-                            <Link to={`/turf/${booking.turf._id}`} key={booking.turf._id + booking.bookingDate + booking.bookingTime}>
-                                <Col className="bookingName">{booking.turf.name}</Col>
-                                <Col className="bookingDateTime">Booked for: {booking.bookingDate} at {booking.bookingTime}</Col>
+                        {bookings.map((booking: { _id: string; turf: { _id: any; name: string }; bookingDate: string; bookingTime: string }) => (
+                            <div>
+                                <Link to={`/turf/${booking.turf._id}`} key={booking.turf._id + booking.bookingDate + booking.bookingTime}>
+                                    <Col className="bookingName">{booking.turf.name}</Col>
+                                    <Col className="bookingDateTime">Booked for: {booking.bookingDate} at {booking.bookingTime}</Col>
+                                </Link>
+                                <BookingControlButtons bookingId={booking._id} deleteBooking={(bookingId) => { onRemoveBooking(bookingId) }} />
                                 <br />
-                            </Link>
+                            </div>
+
                         ))}
                     </div>
                 }
