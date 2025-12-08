@@ -18,6 +18,7 @@ interface TurfLocation {
 
 const Map: React.FC = () => {
   const dispatch = useDispatch();
+  const HTTP_SERVER = import.meta.env.VITE_API_URL || "";
   const [locations, setLocations] = useState<TurfLocation[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,7 @@ const Map: React.FC = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await fetch("/api/locations");
+        const response = await fetch(`${HTTP_SERVER}/api/locations`);
 
         console.log('Response status:', response.status);
         console.log('Response headers:', response.headers.get('content-type'));
@@ -127,7 +128,7 @@ const Map: React.FC = () => {
             location.courts.map(async (courtId) => {
 
               try {
-                const url = `/api/turfs/${courtId}`;
+                const url = `${HTTP_SERVER}/api/turfs/${courtId}`;
                 const response = await fetch(url);
 
                 if (response.ok) {

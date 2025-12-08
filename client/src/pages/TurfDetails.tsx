@@ -13,6 +13,8 @@ import './TurfDetails.css';
 import { bookTurf } from './client';
 import { useSelector } from 'react-redux';
 
+const HTTP_SERVER = import.meta.env.VITE_API_URL || "";
+
 const TurfDetails: React.FC = () => {
    const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { id } = useParams<{ id: string }>();
@@ -39,7 +41,7 @@ const TurfDetails: React.FC = () => {
 
   const fetchTurfDetails = async () => {
     try {
-      const response = await fetch(`/api/turfs/${id}`);
+      const response = await fetch(`${HTTP_SERVER}/api/turfs/${id}`);
       const data = await response.json();
       setTurf(data);
       setIsFavorite(data.isFavorite);
