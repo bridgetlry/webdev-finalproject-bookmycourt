@@ -167,7 +167,7 @@ const Map: React.FC = () => {
               const button = document.getElementById(`court-btn-${turf._id}`);
               if (button) {
                 button.addEventListener('click', () => {
-                  navigate(`/turf/${turf._id}`);  
+                  navigate(`/turf/${turf._id}`);   // Navigate to new turf page
                 });
               }
             });
