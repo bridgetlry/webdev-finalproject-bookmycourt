@@ -4,7 +4,6 @@ export default function BookingRoutes(app, db) {
     const dao = BookingsDao(db);
 
     const bookTurf = async (req, res) => {
-        console.log("params:", req.params);
         const { turfId, userId } = req.params;
         const { date, time } = req.body;
         const newBooking = await dao.bookTurf(userId, turfId, time, date);
