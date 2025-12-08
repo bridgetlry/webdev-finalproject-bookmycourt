@@ -1,9 +1,30 @@
 import * as userDao from "./dao.js";
 
 export default function UserRoutes(app) {
-  // Get all users
+  // Get all users OR filter by role/name
   app.get("/api/users", async (req, res) => {
     try {
+      const { role, name } = req.query;
+
+      // Filter by both role and name
+      if (role && name) {
+        const users = await userDao.findUsersByRoleAndName(role, name);
+        return res.json(users);
+      }
+
+      // Filter by role only
+      if (role) {
+        const users = await userDao.findUsersByRole(role);
+        return res.json(users);
+      }
+
+      // Filter by name only
+      if (name) {
+        const users = await userDao.findUsersByPartialName(name);
+        return res.json(users);
+      }
+
+      // No filters - return all users
       const users = await userDao.findAllUsers();
       res.json(users);
     } catch (error) {
@@ -65,28 +86,6 @@ export default function UserRoutes(app) {
     } catch (error) {
       console.error("Error deleting user:", error);
       res.status(500).json({ error: "Failed to delete user" });
-    }
-  });
-
-  // Search users by name
-  app.get("/api/users/search/:name", async (req, res) => {
-    try {
-      const users = await userDao.findUsersByPartialName(req.params.name);
-      res.json(users);
-    } catch (error) {
-      console.error("Error searching users:", error);
-      res.status(500).json({ error: "Failed to search users" });
-    }
-  });
-
-  // Get users by role
-  app.get("/api/users/role/:role", async (req, res) => {
-    try {
-      const users = await userDao.findUsersByRole(req.params.role);
-      res.json(users);
-    } catch (error) {
-      console.error("Error fetching users by role:", error);
-      res.status(500).json({ error: "Failed to fetch users" });
     }
   });
 
