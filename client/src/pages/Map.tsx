@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import './Map.css';
+import { useNavigate } from 'react-router-dom';
 
 interface TurfLocation {
   _id: string;
@@ -18,6 +19,7 @@ interface TurfLocation {
 
 const Map: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const HTTP_SERVER = import.meta.env.VITE_API_URL || "";
   const [locations, setLocations] = useState<TurfLocation[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +28,9 @@ const Map: React.FC = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await fetch(`${HTTP_SERVER}/api/locations`);
+        const response = await fetch(`${HTTP_SERVER}/api/locations`, {
+  credentials: 'include' // keep user's login credentials
+});
 
         console.log('Response status:', response.status);
         console.log('Response headers:', response.headers.get('content-type'));
@@ -35,11 +39,11 @@ const Map: React.FC = () => {
           throw new Error(`Error status: ${response.status}`);
         }
 
-        // Check what the response actually contains
+        // Get response text
         const text = await response.text();
         console.log('Response text:', text);
 
-        // Try to parse it as JSON
+        // Parse Data as a json for locations
         const data = JSON.parse(text);
         console.log('Parsed data:', data);
 
@@ -129,7 +133,9 @@ const Map: React.FC = () => {
 
               try {
                 const url = `${HTTP_SERVER}/api/turfs/${courtId}`;
-                const response = await fetch(url);
+                const response = await fetch(url, {
+  credentials: 'include' // keep user's login credentials
+});
 
                 if (response.ok) {
                   const data = await response.json();
@@ -161,7 +167,7 @@ const Map: React.FC = () => {
               const button = document.getElementById(`court-btn-${turf._id}`);
               if (button) {
                 button.addEventListener('click', () => {
-                  window.location.href = `/turf/${turf._id}`;
+                  navigate(`/turf/${turf._id}`);  
                 });
               }
             });
