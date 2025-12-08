@@ -28,9 +28,7 @@ const Map: React.FC = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await fetch(`${HTTP_SERVER}/api/locations`, {
-  credentials: 'include' // keep user's login credentials
-});
+        const response = await fetch(`${HTTP_SERVER}/api/locations`);
 
         console.log('Response status:', response.status);
         console.log('Response headers:', response.headers.get('content-type'));
@@ -133,9 +131,7 @@ const Map: React.FC = () => {
 
               try {
                 const url = `${HTTP_SERVER}/api/turfs/${courtId}`;
-                const response = await fetch(url, {
-  credentials: 'include' // keep user's login credentials
-});
+                const response = await fetch(url);
 
                 if (response.ok) {
                   const data = await response.json();
