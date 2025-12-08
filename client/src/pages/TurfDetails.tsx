@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 const HTTP_SERVER = import.meta.env.VITE_API_URL || "";
 
 const TurfDetails: React.FC = () => {
-   const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -122,9 +122,26 @@ const TurfDetails: React.FC = () => {
   };
 
   const handleBookNow = () => {
-    if (selectedSlot && turf) {
-      bookTurf(currentUser?._id, turf.id, selectedDate, selectedSlot.time);
-      alert(`✅ Booking confirmed for ${turf.name} on ${selectedDate} (${selectedSlot.time})`);
+    if (selectedSlot) {
+      if (selectedDate) {
+        if (turf) {
+          if (currentUser) {
+            bookTurf(currentUser?._id, turf.id, selectedDate, selectedSlot.time);
+            alert(`✅ Booking confirmed for ${turf.name} on ${selectedDate} (${selectedSlot.time})`);
+          } else {
+            navigate("/signin", {
+              state: { from: `/turf/${id}` },
+            });
+            alert('Please log in to book a turf.');
+          }
+        } else {
+          alert('Please select a turf');
+        }
+      } else {
+        alert('Please select a date.');
+      }
+    } else {
+      alert('Please select a time slot.');
     }
   };
 
@@ -154,133 +171,132 @@ const TurfDetails: React.FC = () => {
 
   return (
     <>
-    <div className="turf-details-container">
-      {/* Header Image */}
-      <div className="turf-image-header">
-        <img src={turf.image} alt={turf.name} className="turf-main-image" />
-        <div className="image-overlay">
-          <button className="back-btn" onClick={handleBack}>
-            <FaArrowLeft />
-          </button>
-          <button className="favorite-btn-header" onClick={toggleFavorite}>
-            {isFavorite ? (
-              <FaHeart className="heart-icon active" />
-            ) : (
-              <FaRegHeart className="heart-icon" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Turf Info */}
-      <div className="turf-info-section">
-        <div className="turf-title-row">
-          <h1 className="turf-title">{turf.name}</h1>
-          <div className="turf-rating">
-            <FaStar className="star-icon" />
-            <span>{turf.rating}</span>
+      <div className="turf-details-container">
+        {/* Header Image */}
+        <div className="turf-image-header">
+          <img src={turf.image} alt={turf.name} className="turf-main-image" />
+          <div className="image-overlay">
+            <button className="back-btn" onClick={handleBack}>
+              <FaArrowLeft />
+            </button>
+            <button className="favorite-btn-header" onClick={toggleFavorite}>
+              {isFavorite ? (
+                <FaHeart className="heart-icon active" />
+              ) : (
+                <FaRegHeart className="heart-icon" />
+              )}
+            </button>
           </div>
         </div>
 
-        <div className="turf-address-row">
-          <FaMapMarkerAlt className="address-icon" />
-          <span>{turf.address}</span>
+        {/* Turf Info */}
+        <div className="turf-info-section">
+          <div className="turf-title-row">
+            <h1 className="turf-title">{turf.name}</h1>
+            <div className="turf-rating">
+              <FaStar className="star-icon" />
+              <span>{turf.rating}</span>
+            </div>
+          </div>
+
+          <div className="turf-address-row">
+            <FaMapMarkerAlt className="address-icon" />
+            <span>{turf.address}</span>
+          </div>
+
+          <div className="turf-distance-price">
+            <span className="distance-info">{turf.distance} km away</span>
+            <span className="base-price">Starting at ${turf.pricePerHour}/hr</span>
+          </div>
+
+          {turf.description && (
+            <p className="turf-description">{turf.description}</p>
+          )}
+
+          {turf.amenities && turf.amenities.length > 0 && (
+            <div className="amenities-section">
+              <h3>Amenities</h3>
+              <div className="amenities-list">
+                {turf.amenities.map((amenity, index) => (
+                  <span key={index} className="amenity-tag">
+                    {amenity}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="turf-distance-price">
-          <span className="distance-info">{turf.distance} km away</span>
-          <span className="base-price">Starting at ${turf.pricePerHour}/hr</span>
+        {/* Date Selection */}
+        <div className="date-section">
+          <h3>Select Date</h3>
+          <div className="date-picker">
+            {getNextDays().map((day) => (
+              <div
+                key={day.date}
+                className={`date-item ${selectedDate === day.date ? 'selected' : ''}`}
+                onClick={() => handleDateSelect(day.date)}
+              >
+                <span className="day-name">{day.day}</span>
+                <span className="day-number">{day.display}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {turf.description && (
-          <p className="turf-description">{turf.description}</p>
-        )}
+        {/* Time Slots */}
+        <div className="slots-section">
+          <h3>Available Time Slots</h3>
+          <div className="slots-grid">
+            {timeSlots.map((slot) => (
+              <div
+                key={slot.id}
+                className={`slot-item ${!slot.isAvailable ? 'unavailable' : ''} ${selectedSlot?.id === slot.id ? 'selected' : ''
+                  }`}
+                onClick={() => handleSlotSelect(slot)}
+              >
+                <span className="slot-time">{slot.time}</span>
+                <span className="slot-price">${slot.price}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        {turf.amenities && turf.amenities.length > 0 && (
-          <div className="amenities-section">
-            <h3>Amenities</h3>
-            <div className="amenities-list">
-              {turf.amenities.map((amenity, index) => (
-                <span key={index} className="amenity-tag">
-                  {amenity}
-                </span>
-              ))}
+        {/* Pricing Summary */}
+        {selectedSlot && (
+          <div className="pricing-summary">
+            <div className="summary-row">
+              <span>Turf</span>
+              <span>{turf.name}</span>
+            </div>
+            <div className="summary-row">
+              <span>Selected Slot</span>
+              <span>{selectedSlot.time}</span>
+            </div>
+            <div className="summary-row">
+              <span>Date</span>
+              <span>{new Date(selectedDate).toLocaleDateString()}</span>
+            </div>
+            <div className="summary-row total">
+              <span>Total</span>
+              <span>${selectedSlot.price}</span>
             </div>
           </div>
         )}
-      </div>
 
-      {/* Date Selection */}
-      <div className="date-section">
-        <h3>Select Date</h3>
-        <div className="date-picker">
-          {getNextDays().map((day) => (
-            <div
-              key={day.date}
-              className={`date-item ${selectedDate === day.date ? 'selected' : ''}`}
-              onClick={() => handleDateSelect(day.date)}
-            >
-              <span className="day-name">{day.day}</span>
-              <span className="day-number">{day.display}</span>
-            </div>
-          ))}
+        {/* Book Now Button */}
+        <div className="book-section">
+          <button
+            className={`book-now-btn ${!selectedSlot ? 'disabled' : ''}`}
+            onClick={handleBookNow}
+            disabled={!selectedSlot}
+          >
+            {selectedSlot
+              ? `Book Now - $${selectedSlot.price}`
+              : 'Select a Time Slot'}
+          </button>
         </div>
       </div>
-
-      {/* Time Slots */}
-      <div className="slots-section">
-        <h3>Available Time Slots</h3>
-        <div className="slots-grid">
-          {timeSlots.map((slot) => (
-            <div
-              key={slot.id}
-              className={`slot-item ${!slot.isAvailable ? 'unavailable' : ''} ${
-                selectedSlot?.id === slot.id ? 'selected' : ''
-              }`}
-              onClick={() => handleSlotSelect(slot)}
-            >
-              <span className="slot-time">{slot.time}</span>
-              <span className="slot-price">${slot.price}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Pricing Summary */}
-      {selectedSlot && (
-        <div className="pricing-summary">
-          <div className="summary-row">
-            <span>Turf</span>
-            <span>{turf.name}</span>
-          </div>
-          <div className="summary-row">
-            <span>Selected Slot</span>
-            <span>{selectedSlot.time}</span>
-          </div>
-          <div className="summary-row">
-            <span>Date</span>
-            <span>{new Date(selectedDate).toLocaleDateString()}</span>
-          </div>
-          <div className="summary-row total">
-            <span>Total</span>
-            <span>${selectedSlot.price}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Book Now Button */}
-      <div className="book-section">
-        <button
-          className={`book-now-btn ${!selectedSlot ? 'disabled' : ''}`}
-          onClick={handleBookNow}
-          disabled={!selectedSlot}
-        >
-          {selectedSlot
-            ? `Book Now - $${selectedSlot.price}`
-            : 'Select a Time Slot'}
-        </button>
-      </div>
-    </div>
     </>
   );
 };
