@@ -4,47 +4,55 @@ import { ContactForm } from './ContactForm';
 import { FAQ } from './FAQ';
 import { Rules } from './Rules';
 import { GeminiService } from './services/GeminiClient';
+import './Contact.css';
 
 export const Contact: React.FC = () => {
   const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
 
   useEffect(() => {
-    // Initialize Gemini service with API key from .env 
+    // Initialize Gemini service with API key from .env
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
- 
+
     setGeminiService(new GeminiService(apiKey));
   }, []);
 
   if (!geminiService) {
-    return <div>Loading...</div>;
+    return (
+      <div className="contact-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>Get Help</h1>
-   
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginTop: '30px' }}>
-        
-       {/*Chatbot*/}
-        <div style={{ border: '1px solid', overflowY: 'scroll', padding: '20px' }}>
+    <div className="contact-container">
+      <div className="contact-header">
+        <h1>Get Help</h1>
+        <p>We're here to assist you with any questions or concerns</p>
+      </div>
+
+      <div className="contact-grid">
+        {/* Chatbot */}
+        <div className="contact-card chatbot-card">
           <Chatbot geminiService={geminiService} />
         </div>
 
         {/* Contact Form */}
-        <div style={{ border: '1px solid', padding: '20px' }}>
+        <div className="contact-card">
           <ContactForm />
         </div>
 
         {/* FAQ */}
-        <div style={{ border: '1px solid', padding: '20px' }}>
+        <div className="contact-card">
           <FAQ />
         </div>
-
       </div>
-       {/* Rules of Courts (General) */}
-        <div style={{ border: '1px solid', padding: '20px' }}>
-          <Rules />
-        </div>
+
+      {/* Rules of Courts (General) */}
+      <div className="contact-rules-section">
+        <Rules />
+      </div>
     </div>
   );
 };

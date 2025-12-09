@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaPaperPlane } from 'react-icons/fa';
 
 export const ContactForm: React.FC = () => {
   const [name, setName] = useState('');
@@ -8,69 +9,71 @@ export const ContactForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Show popup instead of actually sending email
     setShowAlert(true);
-    
+
     // Clear form
     setName('');
     setEmail('');
     setMessage('');
 
+    // Hide alert after 5 seconds
+    setTimeout(() => setShowAlert(false), 5000);
   };
 
   return (
-    <div>
+    <div className="contact-form-container">
       <h2>Send Us a Message</h2>
-      
+
       {showAlert && (
-        <div style={{ 
-          background: '#00bae4ff', 
-          border: '1px solid #05017cff', 
-          padding: '15px', 
-          marginBottom: '20px',
-          borderRadius: '5px'
-        }}>
+        <div className="contact-success-alert">
           <strong>Message sent!</strong> We will respond soon. In the meantime, check out our FAQs or ask Sporty for additional help!
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Name:</label><br />
+      <form onSubmit={handleSubmit} className="contact-form">
+        <div className="form-group">
+          <label htmlFor="contact-name">Name</label>
           <input
+            id="contact-name"
             type="text"
+            className="contact-input"
+            placeholder="Enter your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px' }}
           />
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>Email:</label><br />
+        <div className="form-group">
+          <label htmlFor="contact-email">Email</label>
           <input
+            id="contact-email"
             type="email"
+            className="contact-input"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px' }}
           />
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>Message:</label><br />
+        <div className="form-group">
+          <label htmlFor="contact-message">Message</label>
           <textarea
+            id="contact-message"
+            className="contact-textarea"
+            placeholder="How can we help you?"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             required
             rows={5}
-            style={{ width: '100%', padding: '8px' }}
           />
         </div>
 
-        <button type="submit" style={{ padding: '10px 20px' }}>
-          Send Message
+        <button type="submit" className="contact-submit-btn">
+          <FaPaperPlane /> Send Message
         </button>
       </form>
     </div>

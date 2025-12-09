@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -77,42 +78,57 @@ export const Chatbot: React.FC<ChatbotProps> = ({ geminiService }) => {
   };
 
   return (
-    <div>
-      <h2>Chat with Us</h2>
-      
-      <div style={{ border: '3px solid black', overflowY: 'scroll', height: '400px', padding: '10px' }}>
+    <div className="chatbot-container">
+      <h2>Chat with Sporty</h2>
+
+      <div className="chat-messages">
         {messages.map((message, index) => (
-          <div key={index} style={{ marginBottom: '10px', textAlign: message.role === 'user' ? 'right' : 'left' }}>
-            <div>
-              <strong>{message.role === 'user' ? 'You' : 'Sporty'}:</strong>
-              <p style={{ margin: '5px 0' }}>{message.content}</p>
-              <small>{message.timestamp.toLocaleTimeString()}</small>
+          <div key={index} className={`chat-message ${message.role}`}>
+            <div className="message-avatar">
+              {message.role === 'user' ? <FaUser /> : <FaRobot />}
+            </div>
+            <div className="message-content">
+              <div className="message-header">
+                <strong>{message.role === 'user' ? 'You' : 'Sporty'}</strong>
+                <span className="message-time">{message.timestamp.toLocaleTimeString()}</span>
+              </div>
+              <p className="message-text">{message.content}</p>
             </div>
           </div>
         ))}
         {isLoading && (
-          <div style={{ marginBottom: '10px', textAlign: 'left' }}>
-            <em>Sporty is warming up...</em>
+          <div className="chat-message assistant">
+            <div className="message-avatar">
+              <FaRobot />
+            </div>
+            <div className="message-content">
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div style={{ marginTop: '10px' }}>
+      <div className="chat-input-container">
         <input
           type="text"
+          className="chat-input"
+          placeholder="Ask me anything..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Ask me anything..."
-          disabled={isLoading}
           onKeyPress={handleKeyPress}
+          disabled={isLoading}
         />
-        <button 
-          onClick={handleSend} 
-          disabled={isLoading || !inputValue.trim()} //trimming whitespaces
-        
+        <button
+          className="chat-send-btn"
+          onClick={handleSend}
+          disabled={isLoading || !inputValue.trim()}
         >
-          Send
+          <FaPaperPlane />
         </button>
       </div>
     </div>

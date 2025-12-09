@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 interface FAQItem {
   question: string;
@@ -36,25 +37,28 @@ export const FAQ: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="faq-container">
       <h2>Frequently Asked Questions</h2>
-      
-      {faqs.map((faq, index) => (
-        <div key={index} style={{ marginBottom: '10px', border: '1px solid #ddd', padding: '10px' }}>
-          <div 
-            onClick={() => toggleFAQ(index)} //Opens answer section onClick
-            style={{ cursor: 'pointer', fontWeight: 'bold' }}
-          >
-            {faq.question}
-          </div>
-          
-          {openIndex === index && (
-            <div style={{ marginTop: '10px', paddingLeft: '10px' }}>
-              {faq.answer}
+
+      <div className="faq-list">
+        {faqs.map((faq, index) => (
+          <div key={index} className={`faq-item ${openIndex === index ? 'active' : ''}`}>
+            <div
+              className="faq-question"
+              onClick={() => toggleFAQ(index)}
+            >
+              <span>{faq.question}</span>
+              {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
             </div>
-          )}
-        </div>
-      ))}
+
+            {openIndex === index && (
+              <div className="faq-answer">
+                {faq.answer}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

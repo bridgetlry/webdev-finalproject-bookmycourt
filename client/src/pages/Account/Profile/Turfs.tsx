@@ -1,24 +1,25 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState, useEffect, useRef } from "react";
 import * as client from "../../Account/client";
 import { useNavigate, useParams } from "react-router-dom";
-import type { TurfDetails as TurfDetailsType } from '../../../types/turf.types';
-import { Button, Col, FormLabel, FormSelect, Row, FormControl } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { addNewTurf, updateTurf } from "../../reducer";
+import { addNewTurf } from "../../reducer";
 import { setLocations } from "../../locationReducer";
+import { FaSave, FaTimes, FaMapMarkerAlt, FaDollarSign, FaClock, FaCheckCircle } from "react-icons/fa";
+import "./Turfs.css";
 
 export default function TurfEditor() {
-  const { lid, tid } = useParams(); // lid = location id, tid = turf id
+  const { lid, tid } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { turfs } = useSelector((state: any) => state.turfReducer);
   const dispatch = useDispatch();
   const hasShownAlert = useRef(false);
-  const { locations } = useSelector((state: any) => state.locationsReducer); 
+  const { locations } = useSelector((state: any) => state.locationsReducer);
 
   const existingTurf = turfs.find((t: any) => t._id === tid);
-  const existingLocations = locations || []; //pull the existing locations info
+  const existingLocations = locations || [];
   const [turf, setTurf] = useState({
     name: "",
     description: "",
@@ -32,7 +33,6 @@ export default function TurfEditor() {
     location: lid || ""
   });
 
-  // Check if user has permission
   useEffect(() => {
     if (currentUser && currentUser.role !== 'COURTOWNER' && !hasShownAlert.current) {
       hasShownAlert.current = true;
@@ -41,33 +41,30 @@ export default function TurfEditor() {
     }
   }, [currentUser, navigate]);
 
- 
-
-  //Fetching existing locations for selection
   useEffect(() => {
-  const fetchLocations = async () => {
-    try {
-      const fetchedLocations = await client.findAllLocations();
-      dispatch(setLocations(fetchedLocations));
-    } catch (error) {
-      console.error("Error fetching locations:", error);
-    }
-  };
-  
-  fetchLocations();
-}, [dispatch]);
+    const fetchLocations = async () => {
+      try {
+        const fetchedLocations = await client.findAllLocations();
+        dispatch(setLocations(fetchedLocations));
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+
+    fetchLocations();
+  }, [dispatch]);
 
   const handleSave = async () => {
     try {
-       if (!turf.location) {
+      if (!turf.location) {
         window.alert("Please select a location first!");
         return;
       }
-      
-      const newTurf = await client.createTurf(turf); // Pass the whole turf object
+
+      const newTurf = await client.createTurf(turf);
       dispatch(addNewTurf(newTurf));
       window.alert("Turf created successfully!");
-      navigate(`/profile`); // Navigate back to profile
+      navigate(`/profile`);
     } catch (error) {
       console.error("Error saving turf:", error);
       window.alert("Error saving turf. Please try again.");
@@ -75,7 +72,7 @@ export default function TurfEditor() {
   };
 
   const handleCancel = () => {
-    navigate(`/profile`); //navigate to profile page
+    navigate(`/profile`);
   };
 
   const handleAmenityChange = (amenity: string, checked: boolean) => {
@@ -85,9 +82,10 @@ export default function TurfEditor() {
       setTurf({ ...turf, amenities: turf.amenities.filter(a => a !== amenity) });
     }
   };
+
   const handleLocationChange = (locationId: string) => {
-  setTurf({...turf, location: locationId})
-}
+    setTurf({ ...turf, location: locationId });
+  };
 
   const availableAmenities = [
     "Bathrooms",
@@ -101,143 +99,151 @@ export default function TurfEditor() {
   ];
 
   return (
-    <div id="wd-turf-editor" className="p-4">
-      <h2>Create New Turf</h2>
-      <br />
+    <div className="turf-editor-container">
+      <div className="turf-editor-card">
+        <div className="turf-editor-header">
+          <h1>Create New Turf</h1>
+          <p>Fill in the details below to list your turf on BookMyCourt</p>
+        </div>
 
-      {/* Turf Name */}
-      <FormLabel htmlFor="wd-turf-name">Turf Name</FormLabel>
-      <FormControl 
-        id="wd-turf-name" 
-        value={turf.name}
-        onChange={(e) => setTurf({ ...turf, name: e.target.value })}
-        placeholder="Enter turf name"
-      />
-      <br />
+        <div className="turf-editor-form">
+          {/* Turf Name */}
+          <div className="form-group">
+            <label htmlFor="wd-turf-name">Turf Name</label>
+            <input
+              type="text"
+              id="wd-turf-name"
+              className="turf-input"
+              placeholder="Enter turf name"
+              value={turf.name}
+              onChange={(e) => setTurf({ ...turf, name: e.target.value })}
+            />
+          </div>
 
-      {/* Description */}
-      <FormLabel htmlFor="wd-turf-description">Description</FormLabel>
-      <FormControl 
-        as="textarea"
-        id="wd-turf-description"
-        rows={5}
-        value={turf.description}
-        onChange={(e) => setTurf({ ...turf, description: e.target.value })}
-        placeholder="Describe the turf facilities, surface type, etc."
-      />
-      <br />
+          {/* Description */}
+          <div className="form-group">
+            <label htmlFor="wd-turf-description">Description</label>
+            <textarea
+              id="wd-turf-description"
+              className="turf-textarea"
+              rows={5}
+              placeholder="Describe the turf facilities, surface type, etc."
+              value={turf.description}
+              onChange={(e) => setTurf({ ...turf, description: e.target.value })}
+            />
+          </div>
 
-      {/* Address */}
-      <Row className="mb-3">
-        <FormLabel htmlFor="wd-address" column sm={3}>
-          Address
-        </FormLabel>
-        <Col sm={9}>
-          <FormControl 
-            id="wd-address" 
-            value={turf.address}
-            onChange={(e) => setTurf({ ...turf, address: e.target.value })}
-            placeholder="123 Main St, City, State, ZIP"
-          />
-        </Col>
-      </Row>
+          {/* Address & Location */}
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="wd-address">
+                <FaMapMarkerAlt /> Address
+              </label>
+              <input
+                type="text"
+                id="wd-address"
+                className="turf-input"
+                placeholder="123 Main St, City, State, ZIP"
+                value={turf.address}
+                onChange={(e) => setTurf({ ...turf, address: e.target.value })}
+              />
+            </div>
 
-      {/* Price Per Hour */}
-      <Row className="mb-3">
-        <FormLabel htmlFor="wd-price" column sm={3}>
-          Price Per Hour ($)
-        </FormLabel>
-        <Col sm={9}>
-          <FormControl 
-            type="number"
-            id="wd-price" 
-            value={turf.pricePerHour}
-            onChange={(e) => setTurf({ ...turf, pricePerHour: Number(e.target.value) })}
-            min="5"
-            step="0.01"
-          />
-        </Col>
-      </Row>
+            <div className="form-group">
+              <label htmlFor="wd-location">Location</label>
+              <select
+                id="wd-location"
+                className="turf-select"
+                value={turf.location}
+                onChange={(e) => handleLocationChange(e.target.value)}
+              >
+                <option value="">Select a location</option>
+                {existingLocations.map((location: any) => (
+                  <option key={location._id} value={location._id}>
+                    {location.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-      {/* Operating Hours */}
-      <Row className="mb-3">
-        <FormLabel column sm={3}>
-          Operating Hours
-        </FormLabel>
-        <Col sm={9}>
-          <div className="border rounded p-3">
-            <Row>
-              <Col>
-                <FormLabel htmlFor="wd-open-time">Open Time</FormLabel>
-                <FormControl 
+          {/* Price Per Hour */}
+          <div className="form-group">
+            <label htmlFor="wd-price">
+              <FaDollarSign /> Price Per Hour
+            </label>
+            <input
+              type="number"
+              id="wd-price"
+              className="turf-input"
+              placeholder="0.00"
+              value={turf.pricePerHour}
+              onChange={(e) => setTurf({ ...turf, pricePerHour: Number(e.target.value) })}
+              min="5"
+              step="0.01"
+            />
+          </div>
+
+          {/* Operating Hours */}
+          <div className="form-group">
+            <label>
+              <FaClock /> Operating Hours
+            </label>
+            <div className="operating-hours">
+              <div className="time-input-group">
+                <label htmlFor="wd-open-time">Open Time</label>
+                <input
                   type="time"
-                  id="wd-open-time" 
+                  id="wd-open-time"
+                  className="turf-input"
                   value={turf.openTime}
                   onChange={(e) => setTurf({ ...turf, openTime: e.target.value })}
                 />
-              </Col>
-              <Col>
-                <FormLabel htmlFor="wd-close-time">Close Time</FormLabel>
-                <FormControl 
+              </div>
+              <div className="time-input-group">
+                <label htmlFor="wd-close-time">Close Time</label>
+                <input
                   type="time"
-                  id="wd-close-time" 
+                  id="wd-close-time"
+                  className="turf-input"
                   value={turf.closeTime}
                   onChange={(e) => setTurf({ ...turf, closeTime: e.target.value })}
                 />
-              </Col>
-            </Row>
-          </div>
-        </Col>
-      </Row>
-
-      {/* Amenities */}
-      <Row className="mb-3">
-        <FormLabel column sm={3}>
-          Amenities
-        </FormLabel>
-        <Col sm={9}>
-          <div className="border rounded p-3">
-            {availableAmenities.map((amenity) => (
-              <div key={amenity} className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id={`amenity-${amenity}`}
-                  checked={turf.amenities.includes(amenity)}
-                  onChange={(e) => handleAmenityChange(amenity, e.target.checked)}
-                />
-                <label className="form-check-label" htmlFor={`amenity-${amenity}`}>
-                  {amenity}
-                </label>
               </div>
-            ))}
+            </div>
           </div>
-        </Col>
-      </Row>
 
-{/* Location*/}
-<div className="d-flex justify-content-end gap-2 mt-4">
-  <select 
-    className="form-select"
-    value={turf.location}
-    onChange={(e) => handleLocationChange(e.target.value)}
-  >
-    <option value="">Select a location</option>
-    {existingLocations.map((location:any) => (
-      <option key={location._id} value={location._id}>
-        {location.name}
-      </option>
-    ))}
-  </select>
-</div>
-      {/* Action Buttons */}
-      <div className="d-flex justify-content-end gap-2 mt-4">
-        <Button variant="secondary" size="lg" onClick={handleCancel}>
-          Cancel
-        </Button>
-        <Button variant="danger" size="lg" onClick={handleSave}>
-           Create Turf
-        </Button>
+          {/* Amenities */}
+          <div className="form-group">
+            <label>Amenities</label>
+            <div className="amenities-grid">
+              {availableAmenities.map((amenity) => (
+                <div key={amenity} className="amenity-checkbox">
+                  <input
+                    type="checkbox"
+                    id={`amenity-${amenity}`}
+                    checked={turf.amenities.includes(amenity)}
+                    onChange={(e) => handleAmenityChange(amenity, e.target.checked)}
+                  />
+                  <label htmlFor={`amenity-${amenity}`}>
+                    <FaCheckCircle className="check-icon" />
+                    {amenity}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="turf-editor-actions">
+            <button className="turf-cancel-btn" onClick={handleCancel}>
+              <FaTimes /> Cancel
+            </button>
+            <button className="turf-save-btn" onClick={handleSave}>
+              <FaSave /> Create Turf
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
