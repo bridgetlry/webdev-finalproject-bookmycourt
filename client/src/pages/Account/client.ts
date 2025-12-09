@@ -47,13 +47,13 @@ export const findAllUsers = async () => {
 
 export const findUsersByRole = async (role: string) => {
   const response = await
-    axiosWithCredentials.get(`${USERS_API}?role=${role}`);
+    axios.get(`${USERS_API}?role=${role}`);
   return response.data;
 };
 
 export const findUsersByPartialName = async (name: string) => {
   const response = await
-    axiosWithCredentials.get(`${USERS_API}?name=${name}`);
+    axios.get(`${USERS_API}?name=${name}`);
   return response.data;
 };
 
@@ -66,7 +66,7 @@ export const findUsersByRoleAndName = async (role: string, name: string) => {
 
 export const findUserById = async (id: string) => {
   const response = await
-    axiosWithCredentials.get(`${USERS_API}/${id}`);
+    axios.get(`${USERS_API}/${id}`);
   return response.data;
 };
 
