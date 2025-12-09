@@ -22,3 +22,8 @@ export const fetchAllUserBookings = async (userId: string) => {
     `${HTTP_SERVER}/api/users/${userId}/bookings`);
   return response.data;
 } 
+
+export const deleteBooking = async (bookingId: string) => {
+  const response = await axiosWithCredentials.delete(`${HTTP_SERVER}/api/bookings/${bookingId}`);
+  return response.data;
+}

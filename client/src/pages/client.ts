@@ -26,4 +26,19 @@ export const bookTurf = async (userId: string, turfId: string, date: string, tim
     return response.data
 }
 
+export const addReview = async (turfId: string, review: { rating: number, comment: string }) => {
+  const response = await axiosWithCredentials.post(
+    `${HTTP_SERVER}/api/turfs/${turfId}/reviews`, 
+    review
+  );
+  return response.data;
+};
+
+export const deleteReview = async (turfId: string, reviewId: string) => {
+  const response = await axiosWithCredentials.delete(
+    `${HTTP_SERVER}/api/turfs/${turfId}/reviews/${reviewId}`
+  );
+  return response.data;
+};
+
 

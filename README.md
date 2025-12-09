@@ -3,4 +3,4 @@ CS5610 - Group Final Project. BookMyCourt - a booking platform for pickle ball c
 
 To start the client, run `npm run dev` in the root project directory.
 
-To start the server, run `nodemon server/server.js`
+To start the server, run `cd server && nodemon server.js`

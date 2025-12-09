@@ -5,6 +5,10 @@ export default function BookingsDao(db) {
     return await model.find({}).populate("turf").populate("user");
   }
 
+  async function findBookingsforUser(userId) {
+    return await model.find({ user: userId }).populate("turf").populate("user");
+  }
+
   async function findTurfsForUser(userId) {
     const bookings = await model.find({ user: userId }).populate("turf");
     return bookings.map((booking) => booking.turf);
@@ -28,8 +32,8 @@ export default function BookingsDao(db) {
     });
   }
 
-  function deleteBookingForUser(user, turf, bookingTime) {
-    return model.deleteOne({ user, turf, bookingTime });
+  function deleteBooking(bookingId) {
+    return model.deleteOne({ _id: bookingId });
   }
 
   function deleteAllBookingsForTurf(turfId) {
@@ -42,10 +46,11 @@ export default function BookingsDao(db) {
 
   return {
     findAllBookings,
+    findBookingsforUser,
     findTurfsForUser,
     findUsersForTurf,
     bookTurf,
-    deleteBookingForUser,
+    deleteBooking,
     deleteAllBookingsForTurf,
     fetchBookings
   };

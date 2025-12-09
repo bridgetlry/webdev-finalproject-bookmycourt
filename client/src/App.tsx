@@ -9,12 +9,27 @@ import Signin from "./pages/Account/Signin";
 import Signup from "./pages/Account/Signup";
 import Profile from "./pages/Account/Profile/Profile";
 import TurfDetails from './pages/TurfDetails';
-import MyBookings from "./pages/Account/Profile/MyBookings/MyBookings";
-import Users from "./pages/Account/Profile/Users";
-import OwnerBookings from "./pages/Account/Profile/OwnerBookings";
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import * as client from './pages/Account/client';
+import { setCurrentUser } from './pages/Account/reducer';
 import Turfs from "./pages/Account/Profile/Turfs";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const user = await client.profile();
+        dispatch(setCurrentUser(user));
+      } catch (error) {
+        console.log('No active session');
+      }
+    };
+    fetchProfile();
+  }, [dispatch]);
+
   return (
     <Router>
       <Navbar />

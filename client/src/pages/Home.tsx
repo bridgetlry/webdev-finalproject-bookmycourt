@@ -200,7 +200,7 @@ const Home: React.FC = () => {
           </div>
         </div>
         <div className="footer">
-          <p>Created by Bridget Leary (SEC 05), Isabel Cuddihy (SEC 05), Ankita Das (SEC 05), and Parthiv Dharmendra Modi (?)</p>
+          <p>Created by Bridget Leary (SEC 05), Isabel Cuddihy (SEC 05), Ankita Das (SEC 05), and Parthiv Dharmendra Modi (SEC 04)</p>
           <Link to="https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/client">Client repository</Link>
           <br />
           <Link to="https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/server">Server repository</Link>
