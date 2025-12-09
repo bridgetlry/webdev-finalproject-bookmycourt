@@ -9,7 +9,7 @@ const TURFS_API = `${HTTP_SERVER}/api/turfs`;
 
 
 export const fetchAllTurfs = async () => {
-  const { data } = await axios.get(TURFS_API);
+  const { data } = await axiosWithCredentials.get(TURFS_API);
   return data;
 };
 

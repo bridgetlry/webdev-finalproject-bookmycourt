@@ -109,7 +109,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ geminiService }) => {
         />
         <button 
           onClick={handleSend} 
-          disabled={isLoading || !inputValue.trim()} //trimming whitespaces
+          disabled={isLoading || !inputValue.trim()}
         
         >
           Send
