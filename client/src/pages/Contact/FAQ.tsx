@@ -15,7 +15,7 @@ export const FAQ: React.FC = () => {
     },
     {
       question: "Can I cancel my booking?",
-      answer: "Yes! You can cancel up to 24 hours before your booking time for a full refund."
+      answer: "Yes! You can cancel up to 24 hours before your booking time for a full refund. Go to your Account to view/edit all current bookings"
     },
     {
       question: "Do you offer group bookings?",
@@ -23,12 +23,16 @@ export const FAQ: React.FC = () => {
     },
     {
       question: "How do I register my own court for rentals?",
-      answer: "We offer a service for court owners to list their courts. Please reach out to us via the contact form for more information."
+      answer: "Court Owners may add new courts for rental on their Account page"
     },
     {
       question: "Do you provide equipment rentals?",
       answer: "No, you are required to bring your own equipment."
     },
+    {
+      question: "Can I leave a review of a court?",
+      answer: "Yes, please do! Courts are rated by users and we encourage you to tell others about your experience on the court."
+    }
   ];
 
   const toggleFAQ = (index: number) => {
