@@ -12,6 +12,7 @@ import TurfDetails from './pages/TurfDetails';
 import MyBookings from "./pages/Account/Profile/MyBookings/MyBookings";
 import Users from "./pages/Account/Profile/Users";
 import OwnerBookings from "./pages/Account/Profile/OwnerBookings";
+import Turfs from "./pages/Account/Profile/Turfs";
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/map" element={<Map />} />
         <Route path="/turf/:id" element={<TurfDetails />} />
+        <Route path="/turfs/new" element={<Turfs />} />
+        <Route path="/turfs/:tid" element={<Turfs />} />
       </Routes>
     </Router>
   );

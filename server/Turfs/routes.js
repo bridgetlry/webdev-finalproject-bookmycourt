@@ -1,6 +1,6 @@
 import TurfsDao from "./dao.js";
 import BookingsDao from "../Bookings/dao.js";
-import LocationsDao from "../Locations/dao.js";
+import addNewCourtToLocation from '../Locations/dao.js';
 
 export default function TurfRoutes(app, db) {
     const dao = TurfsDao(db);
@@ -34,9 +34,14 @@ export default function TurfRoutes(app, db) {
 
     const createTurf= async (req, res) => {
         const currentUser = req.session["currentUser"];
+        if (!currentUser) {
+            return res.status(401).json({ error: "Not authenticated" });
+        }
         const newTurf = await dao.createTurf(req.body);
-        const locationUpdate = await LocationsDao.addNewCourtToLocation(newTurf.location)
-        res.json({course : newCourse, booking: booking});
+        const locationUpdate = await addNewCourtToLocation(newTurf.locationId); // Use locationId, not location
+        console.log(`${locationUpdate._id} Added a new turf`)
+        res.json(newTurf);
+
     };
 
     const deleteTurf = async (req, res) => {
@@ -79,7 +84,7 @@ export default function TurfRoutes(app, db) {
     app.get("/api/turfs", findAllTurfs);
     app.get("/api/turfs/:turfId", findTurfById);
     app.get("/api/users/:userId/turfs", findTurfsForUser);
-    app.post("/api/users/current/turfs", createTurf);
+    app.post("/api/turfs/new", createTurf);
     app.delete("/api/turfs/:turfId",
         deleteTurf);
     app.put("/api/turfs/:turfId",

@@ -9,12 +9,14 @@ import "../../../index.css"
 import OwnerBookings from "./OwnerBookings";
 import MyBookings from "./MyBookings/MyBookings";
 import Users from "./Users";
+import Turfs from "./Turfs";
 
 export default function Profile() {
   const [profile, setProfile] = useState<any>({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+const HTTP_SERVER = import.meta.env.VITE_API_URL || "";
 
   const fetchProfile = () => {
     if (!currentUser) {
@@ -89,8 +91,15 @@ export default function Profile() {
           </Button>
           <br />
           {currentUser && currentUser.role === "COURTOWNER" && (
-            <OwnerBookings />
-          )}
+ <Button 
+    variant="primary" 
+    onClick={() => navigate(`/turfs/new`)}
+  >
+    Create New Turf
+  </Button>
+  
+)}
+       
           {currentUser && currentUser.role === "CUSTOMER" && (
             <MyBookings />
           )}
