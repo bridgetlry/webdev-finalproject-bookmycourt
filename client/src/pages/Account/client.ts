@@ -6,6 +6,7 @@ const HTTP_SERVER = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 export const USERS_API = `${HTTP_SERVER}/api/users`;
 const TURFS_API = `${HTTP_SERVER}/api/turfs`;
+const LOCATION_API = `${HTTP_SERVER}/api/locations`;
 
 export const signin = async (credentials: any) => {
   const response = await axiosWithCredentials.post(
@@ -81,10 +82,12 @@ export const createUser =
     return response.data;
 };
 
+//Turfs
+
 export const createTurf =
   async (turf: any) => {
     const response = await
-      axios.post(`${TURFS_API}`, turf);
+      axiosWithCredentials.post(`${TURFS_API}/new`, turf);
     return response.data;
 };
 
@@ -93,3 +96,15 @@ export const findAllTurfs = async () => {
   return response.data;
 };
 
+export const updateTurf = async (turfId: string, turf: any) => {
+  const response = await axiosWithCredentials.put(`${TURFS_API}/turfs/${turfId}`, turf);
+  return response.data;
+};
+
+
+//Locations
+
+export const findAllLocations = async() => {
+  const response = await axiosWithCredentials.get(`${LOCATION_API}`);
+  return response.data;
+}
