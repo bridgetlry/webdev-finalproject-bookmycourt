@@ -13,7 +13,13 @@ import LocationsRoutes from "./Locations/routes.js";
 const app = express();
 
 const CONNECTION_STRING = process.env.MONGODB_URI;
-mongoose.connect(CONNECTION_STRING);
+mongoose
+  .connect(CONNECTION_STRING)
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => {
+    console.error("MongoDB connection error:", err.message);
+    console.error("Check your MONGODB_URI in .env file");
+  });
 
 app.use(cors({
     credentials: true,
