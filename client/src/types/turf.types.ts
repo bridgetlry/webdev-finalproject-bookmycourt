@@ -16,6 +16,15 @@ export interface TimeSlot {
   price: number;
 }
 
+export interface Review {
+  _id: string;
+  user: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+}
+
 export interface TurfDetails extends Turf {
   description?: string;
   amenities?: string[];
@@ -23,4 +32,6 @@ export interface TurfDetails extends Turf {
   openTime?: string;
   closeTime?: string;
   timeSlots?: TimeSlot[];
+  reviews?: Review[];
+  averageRating?: number;
 }
