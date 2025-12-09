@@ -1,94 +1,6 @@
 import * as userDao from "./dao.js";
 
 export default function UserRoutes(app) {
-  // Get all users OR filter by role/name
-  app.get("/api/users", async (req, res) => {
-    try {
-      const { role, name } = req.query;
-
-      // Filter by both role and name
-      if (role && name) {
-        const users = await userDao.findUsersByRoleAndName(role, name);
-        return res.json(users);
-      }
-
-      // Filter by role only
-      if (role) {
-        const users = await userDao.findUsersByRole(role);
-        return res.json(users);
-      }
-
-      // Filter by name only
-      if (name) {
-        const users = await userDao.findUsersByPartialName(name);
-        return res.json(users);
-      }
-
-      // No filters - return all users
-      const users = await userDao.findAllUsers();
-      res.json(users);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).json({ error: "Failed to fetch users" });
-    }
-  });
-
-  // Get user by ID
-  app.get("/api/users/:userId", async (req, res) => {
-    try {
-      const user = await userDao.findUserById(req.params.userId);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ error: "Failed to fetch user" });
-    }
-  });
-
-  // Create user (admin)
-  app.post("/api/users", async (req, res) => {
-    try {
-      const user = await userDao.createUser(req.body);
-      res.status(201).json(user);
-    } catch (error) {
-      console.error("Error creating user:", error);
-      res.status(500).json({ error: "Failed to create user" });
-    }
-  });
-
-  // Update user
-  app.put("/api/users/:userId", async (req, res) => {
-    try {
-      const { userId } = req.params;
-      await userDao.updateUser(userId, req.body);
-      const updatedUser = await userDao.findUserById(userId);
-
-      // Update session if updating current user
-      const currentUser = req.session["currentUser"];
-      if (currentUser && currentUser._id === userId) {
-        req.session["currentUser"] = updatedUser;
-      }
-
-      res.json(updatedUser);
-    } catch (error) {
-      console.error("Error updating user:", error);
-      res.status(500).json({ error: "Failed to update user" });
-    }
-  });
-
-  // Delete user
-  app.delete("/api/users/:userId", async (req, res) => {
-    try {
-      const result = await userDao.deleteUser(req.params.userId);
-      res.json(result);
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      res.status(500).json({ error: "Failed to delete user" });
-    }
-  });
-
   // ============ AUTH ROUTES ============
 
   // Sign up
@@ -132,12 +44,97 @@ export default function UserRoutes(app) {
     res.sendStatus(200);
   });
 
-  // Get profile (current user)
+  // Get profile (current user) - MOVED BEFORE /:userId
   app.get("/api/users/profile", (req, res) => {
     const currentUser = req.session["currentUser"];
     if (!currentUser) {
       return res.status(401).json({ error: "Not authenticated" });
     }
     res.json(currentUser);
+  });
+
+  // ============ GENERIC USER ROUTES ============
+
+  // Get all users OR filter by role/name
+  app.get("/api/users", async (req, res) => {
+    try {
+      const { role, name } = req.query;
+
+      if (role && name) {
+        const users = await userDao.findUsersByRoleAndName(role, name);
+        return res.json(users);
+      }
+
+      if (role) {
+        const users = await userDao.findUsersByRole(role);
+        return res.json(users);
+      }
+
+      if (name) {
+        const users = await userDao.findUsersByPartialName(name);
+        return res.json(users);
+      }
+
+      const users = await userDao.findAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+
+  // Get user by ID
+  app.get("/api/users/:userId", async (req, res) => {
+    try {
+      const user = await userDao.findUserById(req.params.userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ error: "Failed to fetch user" });
+    }
+  });
+
+  // Create user (admin)
+  app.post("/api/users", async (req, res) => {
+    try {
+      const user = await userDao.createUser(req.body);
+      res.status(201).json(user);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ error: "Failed to create user" });
+    }
+  });
+
+  // Update user
+  app.put("/api/users/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      await userDao.updateUser(userId, req.body);
+      const updatedUser = await userDao.findUserById(userId);
+
+      const currentUser = req.session["currentUser"];
+      if (currentUser && currentUser._id === userId) {
+        req.session["currentUser"] = updatedUser;
+      }
+
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ error: "Failed to update user" });
+    }
+  });
+
+  // Delete user
+  app.delete("/api/users/:userId", async (req, res) => {
+    try {
+      const result = await userDao.deleteUser(req.params.userId);
+      res.json(result);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ error: "Failed to delete user" });
+    }
   });
 }
