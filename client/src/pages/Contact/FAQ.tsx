@@ -39,6 +39,7 @@ export const FAQ: React.FC = () => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  //Click on question and answer will open below
   return (
     <div>
       <h2>Frequently Asked Questions</h2>
