@@ -1,14 +1,15 @@
 import * as client from "../client";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { setCurrentUser } from "../reducer";
 import { Button, FormControl } from "react-bootstrap";
 import "../Account.css";
 import "../../../index.css";
-import OwnerBookings from "./OwnerBookings";
 import MyBookings from "./MyBookings/MyBookings";
 import Users from "./Users";
+import Favorites from "./Favorites";
+import MyReviews from "./MyReviews";
 
 export default function Profile() {
   const [profile, setProfile] = useState<any>({});
@@ -16,7 +17,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-const HTTP_SERVER = import.meta.env.VITE_API_URL || "";
+  const HTTP_SERVER = import.meta.env.VITE_API_URL || "";
 
   const fetchProfile = async () => {
     try {
@@ -139,22 +140,19 @@ const HTTP_SERVER = import.meta.env.VITE_API_URL || "";
           </Button>
           <br />
           {currentUser && currentUser.role === "COURTOWNER" && (
- <Button 
-    variant="primary" 
-    onClick={() => navigate(`/turfs/new`)}
-  >
-    Create New Turf
-  </Button>
-  
-)}
-       
-          {currentUser && currentUser.role === "CUSTOMER" && (
-            <MyBookings />
+            <Button variant="primary" onClick={() => navigate(`/turfs/new`)}>
+              Create New Turf
+            </Button>
           )}
-          {currentUser && currentUser.role === "ADMIN" && (
-            <Users />
-          )} 
 
+          {currentUser && currentUser.role === "CUSTOMER" && (
+            <>
+              <MyBookings />
+              <Favorites />
+              <MyReviews />
+            </>
+          )}
+          {currentUser && currentUser.role === "ADMIN" && <Users />}
         </div>
       )}
     </div>

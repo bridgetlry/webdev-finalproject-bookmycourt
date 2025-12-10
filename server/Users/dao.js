@@ -50,5 +50,30 @@ export const findUsersByRoleAndName = (role, name) => {
       { lastName: { $regex: regex } },
       { username: { $regex: regex } },
     ],
-  });
+  })};
+
+  export function addFavorite(userId, turfId) {
+  return model.updateOne(
+    { _id: userId },
+    { $addToSet: { favoriteTurfs: turfId } }
+  );
+}
+
+export function removeFavorite(userId, turfId) {
+  return model.updateOne(
+    { _id: userId },
+    { $pull: { favoriteTurfs: turfId } }
+  );
+}
+
+export function getFavorites(userId) {
+  return model.findById(userId).populate('favoriteTurfs');
+}
+
+export function isFavorite(userId, turfId) {
+  return model.findOne({
+    _id: userId,
+    favoriteTurfs: turfId
+  }).then(user => !!user);
+
 };

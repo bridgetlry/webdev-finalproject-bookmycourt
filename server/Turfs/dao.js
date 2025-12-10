@@ -73,6 +73,25 @@ export default function TurfsDao(db) {
     return turf;
   }
 
+  async function findReviewsByUser(userId) {
+    const turfs = await model.find({ "reviews.user": userId });
+
+    const userReviews = [];
+    turfs.forEach((turf) => {
+      const reviews = turf.reviews.filter((r) => r.user === userId);
+      reviews.forEach((review) => {
+        userReviews.push({
+          ...review.toObject(),
+          turfId: turf._id,
+          turfName: turf.name,
+          turfImage: turf.image,
+        });
+      });
+    });
+
+    return userReviews;
+  }
+
   return {
     findAllTurfs,
     findTurfById,
@@ -82,5 +101,6 @@ export default function TurfsDao(db) {
     updateTurf,
     addReview,
     deleteReview,
+    findReviewsByUser,
   };
 }
