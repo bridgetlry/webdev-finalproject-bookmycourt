@@ -2,10 +2,9 @@
 import { useState, useEffect, useRef } from "react";
 import * as client from "../../Account/client";
 import { useNavigate, useParams } from "react-router-dom";
-import type { TurfDetails as TurfDetailsType } from '../../../types/turf.types';
-import { Button, Col, FormLabel, FormSelect, Row, FormControl } from "react-bootstrap";
+import { Button, Col, FormLabel, Row, FormControl } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { addNewTurf, updateTurf } from "../../reducer";
+import { addNewTurf } from "../../reducer";
 import { setLocations } from "../../locationReducer";
 
 export default function TurfEditor() {

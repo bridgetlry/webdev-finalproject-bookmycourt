@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import * as client from './pages/Account/client';
 import { setCurrentUser } from './pages/Account/reducer';
 import Turfs from "./pages/Account/Profile/Turfs";
+import PublicProfile from "./pages/Account/PublicProfile";
 
 function App() {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ function App() {
         <Route path="/turf/:id" element={<TurfDetails />} />
         <Route path="/turfs/new" element={<Turfs />} />
         <Route path="/turfs/:tid" element={<Turfs />} />
+        <Route path="/users/:userId" element={<PublicProfile />} />
       </Routes>
     </Router>
   );

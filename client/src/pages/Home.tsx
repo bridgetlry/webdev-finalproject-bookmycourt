@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import type { Turf } from "../types/turf.types";
 import { getAllTurfs } from "../data/mockTurfs";
 import * as client from "./client";
+import { useSelector } from "react-redux";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Home: React.FC = () => {
   const [turfs, setTurfs] = useState<Turf[]>([]);
   const [filteredTurfs, setFilteredTurfs] = useState<Turf[]>([]);
   const [featuredTurfs, setFeaturedTurfs] = useState<Turf[]>([]);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   useEffect(() => {
     detectLocation();
@@ -37,6 +39,28 @@ const Home: React.FC = () => {
       setFilteredTurfs(filtered);
     }
   }, [searchQuery, turfs]);
+
+  useEffect(() => {
+    const loadFavorites = async () => {
+      if (currentUser) {
+        try {
+          const favorites = await client.getFavorites(currentUser._id);
+          const favoriteIds = favorites.map((f: any) => f._id);
+
+          setTurfs((prevTurfs) =>
+            prevTurfs.map((turf) => ({
+              ...turf,
+              isFavorite: favoriteIds.includes(turf.id),
+            }))
+          );
+        } catch (error) {
+          console.error("Error loading favorites:", error);
+        }
+      }
+    };
+
+    loadFavorites();
+  }, [currentUser]);
 
   const detectLocation = () => {
     if (navigator.geolocation) {
@@ -66,6 +90,19 @@ const Home: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const savedQuery = localStorage.getItem("turfSearchQuery");
+    if (savedQuery) {
+      setSearchQuery(savedQuery);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (searchQuery) {
+      localStorage.setItem("turfSearchQuery", searchQuery);
+    }
+  }, [searchQuery]);
+
   const loadMockData = () => {
     const mockTurfs = getAllTurfs();
     setTurfs(mockTurfs);
@@ -77,13 +114,57 @@ const Home: React.FC = () => {
     navigate(`/turf/${turfId}`);
   };
 
-  const toggleFavorite = (turfId: string, e: React.MouseEvent) => {
+  const toggleFavorite = async (turfId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setTurfs((prevTurfs) =>
-      prevTurfs.map((turf) =>
-        turf.id === turfId ? { ...turf, isFavorite: !turf.isFavorite } : turf
-      )
-    );
+
+    if (!currentUser) {
+      alert("Please sign in to save favorites");
+      navigate("/signin");
+      return;
+    }
+
+    try {
+      console.log("Toggling favorite:", { turfId, userId: currentUser._id });
+
+      const turf = turfs.find((t) => t.id === turfId);
+
+      if (!turf) {
+        console.error("Turf not found:", turfId);
+        alert("Turf not found");
+        return;
+      }
+
+      console.log("Current favorite status:", turf.isFavorite);
+
+      if (turf.isFavorite) {
+        console.log("Removing from favorites...");
+        await client.removeFavorite(currentUser._id, turfId);
+        console.log("Successfully removed from favorites");
+      } else {
+        console.log("Adding to favorites...");
+        await client.addFavorite(currentUser._id, turfId);
+        console.log("Successfully added to favorites");
+      }
+
+      // Update local state
+      setTurfs((prevTurfs) =>
+        prevTurfs.map((t) =>
+          t.id === turfId ? { ...t, isFavorite: !t.isFavorite } : t
+        )
+      );
+
+      // Show success message
+      alert(turf.isFavorite ? "Removed from favorites" : "Added to favorites");
+    } catch (error: any) {
+      console.error("Error toggling favorite:", error);
+
+      // More detailed error message
+      const errorMessage =
+        error.response?.data?.error ||
+        error.message ||
+        "Failed to update favorite";
+      alert(`Error: ${errorMessage}`);
+    }
   };
 
   const handleProfileClick = () => {
@@ -114,6 +195,26 @@ const Home: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+
+        {currentUser && (
+          <div
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              padding: "20px",
+              margin: "0 20px 20px 20px",
+              borderRadius: "12px",
+              color: "white",
+              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+            }}
+          >
+            <h2 style={{ margin: "0 0 8px 0", fontSize: "24px" }}>
+              Welcome back, {currentUser.firstName}! 👋
+            </h2>
+            <p style={{ margin: 0, opacity: 0.9, fontSize: "14px" }}>
+              Ready to book your next game?
+            </p>
+          </div>
+        )}
 
         {/* Featured Turfs Carousel */}
         {featuredTurfs.length > 0 && (
@@ -200,10 +301,17 @@ const Home: React.FC = () => {
           </div>
         </div>
         <div className="footer">
-          <p>Created by Bridget Leary (SEC 05), Isabel Cuddihy (SEC 05), Ankita Das (SEC 05), and Parthiv Dharmendra Modi (SEC 04)</p>
-          <Link to="https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/client">Client repository</Link>
+          <p>
+            Created by Bridget Leary (SEC 05), Isabel Cuddihy (SEC 05), Ankita
+            Das (SEC 05), and Parthiv Dharmendra Modi (SEC 04)
+          </p>
+          <Link to="https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/client">
+            Client repository
+          </Link>
           <br />
-          <Link to="https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/server">Server repository</Link>
+          <Link to="https://github.com/bridgetlry/webdev-finalproject-bookmycourt/tree/main/server">
+            Server repository
+          </Link>
         </div>
       </div>
     </>

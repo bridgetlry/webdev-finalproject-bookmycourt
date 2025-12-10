@@ -110,3 +110,38 @@ export const findAllLocations = async() => {
   const response = await axiosWithCredentials.get(`${LOCATION_API}`);
   return response.data;
 }
+
+// ============ FAVORITES ============
+
+export const addFavorite = async (userId: string, turfId: string) => {
+  const response = await axiosWithCredentials.post(
+    `${USERS_API}/${userId}/favorites/${turfId}`
+  );
+  return response.data;
+};
+
+export const removeFavorite = async (userId: string, turfId: string) => {
+  const response = await axiosWithCredentials.delete(
+    `${USERS_API}/${userId}/favorites/${turfId}`
+  );
+  return response.data;
+};
+
+export const getFavorites = async (userId: string) => {
+  const response = await axiosWithCredentials.get(
+    `${USERS_API}/${userId}/favorites`
+  );
+  return response.data;
+};
+
+export const checkIsFavorite = async (userId: string, turfId: string) => {
+  const response = await axiosWithCredentials.get(
+    `${USERS_API}/${userId}/favorites/${turfId}/check`
+  );
+  return response.data.isFavorite;
+};
+
+export const findPublicUserById = async (userId: string) => {
+  const response = await axios.get(`${USERS_API}/${userId}/public`);
+  return response.data;
+};

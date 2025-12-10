@@ -108,6 +108,12 @@ export default function TurfRoutes(app, db) {
     res.json(updatedTurf);
   };
 
+  const findReviewsByUser = async (req, res) => {
+    const { userId } = req.params;
+    const reviews = await dao.findReviewsByUser(userId);
+    res.json(reviews);
+  };
+
   app.get("/api/turfs", findAllTurfs);
   app.get("/api/turfs/:turfId", findTurfById);
   app.get("/api/users/:userId/turfs", findTurfsForUser);
@@ -118,4 +124,5 @@ export default function TurfRoutes(app, db) {
   app.delete("/api/users/:uid/turfs/:cid", deleteBookingForUser);
   app.post("/api/turfs/:turfId/reviews", addReview);
   app.delete("/api/turfs/:turfId/reviews/:reviewId", deleteReview);
+  app.get("/api/users/:userId/reviews", findReviewsByUser);
 }

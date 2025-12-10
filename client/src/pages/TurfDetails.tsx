@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   FaArrowLeft,
   FaStar,
@@ -369,6 +369,7 @@ const TurfDetails: React.FC = () => {
           className="reviews-section"
           style={{ padding: "20px", borderTop: "1px solid #eee" }}
         >
+          {/* Header with Review Count and Write Button */}
           <div
             style={{
               display: "flex",
@@ -467,8 +468,30 @@ const TurfDetails: React.FC = () => {
                     }}
                   >
                     <div>
-                      <strong>{review.userName}</strong>
-                      <div style={{ color: "#ffc107", fontSize: "14px" }}>
+                      {/* Clickable username linking to public profile */}
+                      <Link
+                        to={`/users/${review.user}`}
+                        style={{
+                          textDecoration: "none",
+                          color: "#007bff",
+                          fontWeight: "600",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.textDecoration = "underline")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.textDecoration = "none")
+                        }
+                      >
+                        {review.userName}
+                      </Link>
+                      <div
+                        style={{
+                          color: "#ffc107",
+                          fontSize: "14px",
+                          marginTop: "4px",
+                        }}
+                      >
                         {"★".repeat(review.rating)}
                         {"☆".repeat(5 - review.rating)}
                       </div>

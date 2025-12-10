@@ -137,4 +137,92 @@ export default function UserRoutes(app) {
       res.status(500).json({ error: "Failed to delete user" });
     }
   });
+
+  // ============ FAVORITES ROUTES ============
+  
+  // Add favorite
+  app.post("/api/users/:userId/favorites/:turfId", async (req, res) => {
+    try {
+      const { userId, turfId } = req.params;
+      const currentUser = req.session["currentUser"];
+      
+      if (!currentUser || currentUser._id !== userId) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+      
+      await userDao.addFavorite(userId, turfId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+      res.status(500).json({ error: "Failed to add favorite" });
+    }
+  });
+
+  // Remove favorite
+  app.delete("/api/users/:userId/favorites/:turfId", async (req, res) => {
+    try {
+      const { userId, turfId } = req.params;
+      const currentUser = req.session["currentUser"];
+      
+      if (!currentUser || currentUser._id !== userId) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+      
+      await userDao.removeFavorite(userId, turfId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error removing favorite:", error);
+      res.status(500).json({ error: "Failed to remove favorite" });
+    }
+  });
+
+  // Get user's favorites
+  app.get("/api/users/:userId/favorites", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await userDao.getFavorites(userId);
+      res.json(user?.favoriteTurfs || []);
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+      res.status(500).json({ error: "Failed to fetch favorites" });
+    }
+  });
+
+  // Check if turf is favorite
+  app.get("/api/users/:userId/favorites/:turfId/check", async (req, res) => {
+    try {
+      const { userId, turfId } = req.params;
+      const isFav = await userDao.isFavorite(userId, turfId);
+      res.json({ isFavorite: isFav });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to check favorite" });
+    }
+  });
+
+  // ============ PUBLIC PROFILE ============
+  
+  app.get("/api/users/:userId/public", async (req, res) => {
+    try {
+      const user = await userDao.findUserById(req.params.userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      // Return only public information
+      const publicProfile = {
+        _id: user._id,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        createdAt: user.createdAt
+      };
+      
+      res.json(publicProfile);
+    } catch (error) {
+      console.error("Error fetching public profile:", error);
+      res.status(500).json({ error: "Failed to fetch profile" });
+    }
+  });
 }
