@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
       enum: ["COURTOWNER", "CUSTOMER", "ADMIN"],
       default: "CUSTOMER",
     },
-    favoriteTurfs: [{ type: String, ref: "TurfModel" }],  // ADD THIS LINE
+    favoriteTurfs: [{ type: String, ref: "TurfModel" }],
     createdAt: { type: Date, default: Date.now },
   },
   { collection: "users" }
